@@ -1,2 +1,2 @@
-# template
-A template for making a blank repo
+# gittide
+View the latest activity in a git org
