@@ -5,7 +5,7 @@ const sassPlugin = require('esbuild-plugin-sass')
 esbuild.build({
   entryPoints: ['src/index.js'],
   bundle: true,
-  outfile: 'public/bundle.js',
+  outfile: 'docs/bundle.js',
   sourcemap: true,
   platform: "browser",
   plugins: [sassPlugin()],
@@ -21,7 +21,7 @@ esbuild.build({
   console.log(result)
 
   new FiveServer().start({
-    root: './public',
+    root: './docs',
     open: true,
     port: 1234
   })
