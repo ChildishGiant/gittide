@@ -1,0 +1,73 @@
+<article class="media">
+
+  <figure class="media-left">
+    <a href="https://github.com/<%= event.actor.display_login %>">
+      <figure class="image is-32x32 is-inline-block is-vertically-middle">
+        <img class="is-rounded" src="<%= event.actor.avatar_url %>" alt="@<%= event.actor.display_login %>">
+      </figure>
+    </a>
+  </figure>
+
+  <div class="media-content">
+
+    <a href="https://github.com/<%= event.actor.display_login %>" class="has-text-weight-semibold"><%= event.actor.display_login %></a>
+
+    pushed to
+
+    <a href="https://github.com/<%= event.repo.name %>" class="has-text-weight-semibold"><%= event.repo.name %></a>
+    <span class="is-size-7">
+      <%= new Date(event.created_at).toLocaleString() %>
+    </span>
+
+    <div class="card">
+      <div class="card-content">
+        <% if (event.payload.size == 1) { %>
+        <span>1 commit to</span>
+        <%} else if (event.payload.size > 1) { %>
+          <span><%= event.payload.size %> commits to</span>
+        <%}%>
+        <a href="https://github.com/<%= event.repo.name %>/tree/<%= event.payload.ref.split("/")[2] %>"><%= event.payload.ref.split("/")[2] %></a>
+
+        <div>
+          <ul>
+              <li>
+                <a alt="@<%= event.actor.display_login %>" href="https://github.com/<%= event.actor.display_login %>">
+                  <figure class="image is-16x16 is-inline-block is-vertically-middle">
+                    <img class="is-rounded" src="<%= event.actor.avatar_url %>" alt="@<%= event.actor.display_login %>">
+                  </figure>
+                </a>
+
+                <a class="hash" href="https://github.com/<%= event.repo.name %>/commit/<%= event.payload.commits[0].sha %>"><%= event.payload.commits[0].sha.substring(0,7) %></a>
+                <blockquote class="is-inline">
+                  <%= event.payload.commits[0].message.split("\n")[0] %>
+                </blockquote>
+
+
+                <!-- If there's more than one do it all again
+                  This could probably be neater but fuck it
+                -->
+                <% if (event.payload.size > 1) { %>
+                  <br>
+                  <a alt="@<%= event.actor.display_login %>" href="https://github.com/<%= event.actor.display_login %>">
+                    <figure class="image is-16x16 is-inline-block is-vertically-middle">
+                      <img class="is-rounded" src="<%= event.actor.avatar_url %>" alt="@<%= event.actor.display_login %>">
+                    </figure>
+                  </a>
+                  <a class="hash" href="https://github.com/<%= event.repo.name %>/commit/<%= event.payload.commits[1].sha %>"><%= event.payload.commits[1].sha.substring(0,7) %></a>
+                  <blockquote class="is-inline">
+                    <%= event.payload.commits[1].message.split("\n")[0] %>
+                  </blockquote>
+                <%}%>
+
+                <% if (event.payload.size > 2) { %>
+                  <br>
+                  <a class="more"><%= event.payload.size - 2 %> more commits »</a>
+                <% } %>
+
+              </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
