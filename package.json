@@ -4,7 +4,7 @@
   "description": "A template for making a blank repo",
   "main": "test.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx five-server docs",
     "build": "node esbuild/build.js",
     "dev": "node esbuild/dev.js"
   },
@@ -18,15 +18,15 @@
     "url": "https://github.com/ChildishGiant/gittide/issues"
   },
   "homepage": "https://github.com/ChildishGiant/gittide#readme",
-  "dependencies": {
-    "bulma": "^0.9.3"
-  },
   "devDependencies": {
     "ejs": "^3.1.6",
     "esbuild": "^0.12.19",
     "esbuild-plugin-sass": "^0.6.0",
     "esbuild-sass-plugin": "^1.4.13",
     "esbuild-serve": "^1.0.1",
-    "five-server": "0.0.28"
+    "five-server": "^0.0.20"
+  },
+  "dependencies": {
+    "bulma": "^0.9.3"
   }
 }

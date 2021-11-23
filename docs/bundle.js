@@ -1226,22 +1226,56 @@ function encode_char(c) {
     }
   });
 
+  // src/templates/IssueCommentEvent/created.ejs
+  var require_created = __commonJS({
+    "src/templates/IssueCommentEvent/created.ejs"(exports, module) {
+      module.exports = '<article class="media">\n  <figure class="media-left">\n    <a href="https://github.com/<%= event.actor.display_login %>">\n      <figure class="image is-32x32 is-inline-block is-vertically-middle">\n        <img class="is-rounded" src="<%= event.actor.avatar_url %>" alt="@<%= event.actor.display_login %>">\n      </figure>\n    </a>\n  </figure>\n\n  <div class="media-content">\n\n    <a href="https://github.com/<%= event.actor.display_login %>" class="has-text-weight-semibold"><%= event.actor.display_login %></a>\n\n      commented on\n\n      <figure class="image is-16x16 is-inline-block is-vertically-middle">\n        <img class="is-rounded" src="imgs/open-issue.svg">\n      </figure>\n      <a class="has-text-weight-semibold" href="<%= event.payload.issue.html_url %>"><%= event.payload.issue.title %></a>\n      in\n      <a href="https://github.com/<%= event.repo.name %>" class="has-text-weight-semibold"><%= event.repo.name %></a>\n    <span class="is-size-7">\n      <%= new Date(event.created_at).toLocaleString() %>\n    </span>\n\n    <div class="card">\n      <div class="card-content">\n\n\n\n        <a class="has-text-weight-semibold" href="<%= event.payload.issue.html_url %>"><%= event.payload.issue.title %></a>\n\n      </div>\n    </div>\n  </div>\n</article>\n';
+    }
+  });
+
+  // src/templates/IssueCommentEvent.js
+  var IssueCommentEvent_exports = {};
+  __export(IssueCommentEvent_exports, {
+    selector: () => selector2
+  });
+  function selector2(event) {
+    event = event.event;
+    switch (event.payload.action) {
+      case "created":
+        return ejs2.render(created, { event });
+        break;
+      default:
+        return "DEFAULT ISSUESEVENT";
+        break;
+    }
+    return "DEFAULT ISSUESEVENT";
+  }
+  var ejs2, created;
+  var init_IssueCommentEvent = __esm({
+    "src/templates/IssueCommentEvent.js"() {
+      ejs2 = require_ejs();
+      created = require_created();
+    }
+  });
+
   // src/templates/templates.js
   var templates_exports = {};
   __export(templates_exports, {
     Templates: () => Templates
   });
-  var PushEvent, IssuesEvent, ReleaseEvent, ejs2, Templates;
+  var PushEvent, IssuesEvent, ReleaseEvent, IssueCommentEvent, ejs3, Templates;
   var init_templates = __esm({
     "src/templates/templates.js"() {
       PushEvent = require_PushEvent();
       IssuesEvent = (init_IssuesEvent(), IssuesEvent_exports);
       ReleaseEvent = require_ReleaseEvent();
-      ejs2 = require_ejs();
+      IssueCommentEvent = (init_IssueCommentEvent(), IssueCommentEvent_exports);
+      ejs3 = require_ejs();
       Templates = {
-        "PushEvent": ejs2.compile(PushEvent),
+        "PushEvent": ejs3.compile(PushEvent),
         "IssuesEvent": IssuesEvent.selector,
-        "ReleaseEvent": ejs2.compile(ReleaseEvent)
+        "ReleaseEvent": ejs3.compile(ReleaseEvent),
+        "IssueCommentEvent": IssueCommentEvent.selector
       };
     }
   });
@@ -1249,20 +1283,25 @@ function encode_char(c) {
   // src/index.js
   var templates = (init_templates(), templates_exports).Templates;
   var items;
+  var EVENT_LOG = false;
+  var IGNORE = ["CreateEvent"];
   window.onload = function() {
     items = document.getElementById("items");
     fetch("https://api.github.com/orgs/elementary/events").then((response) => data = response.json()).then((json) => process(json));
   };
   function process(data2) {
-    data2 = data2.reverse();
     const keys = Object.keys(templates);
     data2.forEach((event) => {
-      if (keys.indexOf(event.type) > -1) {
+      if (IGNORE.includes(event.type))
+        return;
+      if (keys.includes(event.type)) {
         const template = templates[event.type];
         const html = template({ event });
         items.innerHTML += html;
-        console.log(`Template: ${event.type}`);
-        console.log(event);
+        if (EVENT_LOG) {
+          console.log(`Template: ${event.type}`);
+          console.log(event);
+        }
       } else {
         console.log(`No template: ${event.type}`);
         console.log(event);
